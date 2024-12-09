@@ -1,44 +1,9 @@
 from datetime import datetime
-from enum import Enum
-
 from pydantic import BaseModel, field_validator
 
 from validators import check_metadata
 from .components import *
 from .payment_methods import PaymentMethod
-
-
-class Settlement(BaseModel):
-    type: str = "payout"  # Тип операции. Фиксированное значение: payout — выплата продавцу.
-    amount: Amount  # Данные о сумме распределения денег.
-
-
-class Deal(BaseModel):
-    id: str  # Идентификатор сделки.
-    settlements: list[Settlement]  # Данные о распределении денег.
-
-
-class InvoiceDetails(BaseModel):
-    id: str | None = None  # Идентификатор счета в ЮКасса.
-
-
-class Transfer(BaseModel):
-    account_id: str
-    amount: Amount
-    status: PaymentStatus
-    platform_fee_amount: Amount
-    description: str | None
-    metadata: dict | None
-
-    @field_validator('metadata')
-    def _check_metadata(cls, value: dict) -> dict:
-        return check_metadata(value)
-
-
-class ReceiptRegistration(Enum):
-    pending = "pending"
-    succeeded = "succeeded"
-    canceled = "canceled"
 
 
 class Payment(BaseModel):
@@ -49,9 +14,9 @@ class Payment(BaseModel):
     description: str | None
     recipient: Recipient
     payment_method: PaymentMethod | None
-    captured_at: str | None  # Время подтверждения платежа. Указывается по UTC и передается в формате ISO 8601.
-    created_at: str  # Время создания способа оплаты. UTC ISO 8601 (2017-11-03T11:52:31.827Z).
-    expires_at: str | None  # Время, до которого вы можете бесплатно отменить или подтвердить платеж. В указанное время платеж в статусе waiting_for_capture будет автоматически отменен. Указывается по UTC и передается в формате ISO 8601. Пример: 2017-11-03T11:52:31.827Z
+    captured_at: datetime | None  # Время подтверждения платежа. Указывается по UTC и передается в формате ISO 8601.
+    created_at: datetime  # Время создания способа оплаты. UTC ISO 8601 (2017-11-03T11:52:31.827Z).
+    expires_at: datetime | None  # Время, до которого вы можете бесплатно отменить или подтвердить платеж. В указанное время платеж в статусе waiting_for_capture будет автоматически отменен. Указывается по UTC и передается в формате ISO 8601. Пример: 2017-11-03T11:52:31.827Z
     confirmation: Confirmation | None
     test: bool  # Признак тестового способа оплаты.
     refunded_amount: Amount | None  # Сумма возврата.

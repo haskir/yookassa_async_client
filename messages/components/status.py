@@ -15,7 +15,14 @@ class CancellationStatus(Enum):
     MERCHANT = "merchant"
 
 
+class ReceiptRegistration(Enum):
+    pending = "pending"
+    succeeded = "succeeded"
+    canceled = "canceled"
+
+
 __all__ = [
     'PaymentStatus',
     'CancellationStatus',
+    'ReceiptRegistration',
 ]
