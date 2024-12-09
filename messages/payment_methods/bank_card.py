@@ -17,11 +17,11 @@ class CardType(Enum):
     UnionPay = "UnionPay"
 
 
-class Card(PaymentMethod):
+class Card(BaseModel):
     first6: str | None  # Первые 6 цифр номера карты.
     last4: str  # Последние 4 цифры номера карты.
-    expiry_year: str  # Год истечения срока действия карты.
-    expiry_month: str  # Месяц истечения срока действия карты.
+    expiry_year: str  # Год истечения срока действия карты.
+    expiry_month: str  # Месяц истечения срока действия карты.
     card_type: CardType  # Тип банковской карты. Возможные значения:  (для карт Mastercard и Maestro), Visa (для карт Visa и Visa Electron), Mir, UnionPay
     card_product: CardProduct | None  # Карточный продукт платежной системы, с которым ассоциирована банковская карта.
     issuer_country: str | None  # Код страны, в которой выпущена карта. Передается в формате ISO-3166 alpha-2. Пример: RU.
@@ -39,3 +39,20 @@ class Card(PaymentMethod):
         if len(value) != 4:
             raise ValueError("Last 4 digits must be 4 characters long")
         return value
+
+    @field_validator('expiry_year')
+    def check_expiry_year(cls, value: str) -> str:
+        if len(value) != 4:
+            raise ValueError("Expiry year must be 4 characters long")
+        return value
+
+    @field_validator('expiry_month')
+    def check_expiry_month(cls, value: str) -> str:
+        if len(value) != 2:
+            raise ValueError("Expiry month must be 2 characters long")
+        return value
+
+
+class BankCardPaymentMethod(PaymentMethod):
+    type: str = "bank_card"
+    card: Card  # Данные банковской карты.
