@@ -44,3 +44,12 @@ class CancellationDetails(BaseModel):
     reason: str  # Причина отмены платежа
 
 
+__all__ = [
+    'Confirmation',
+    'Embedded',
+    'External',
+    'MobileApplication',
+    'QR',
+    'Redirect',
+    'CancellationDetails',
+]
