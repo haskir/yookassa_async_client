@@ -17,7 +17,7 @@ class CreatePayout(_CreatePayoutRequired):
     deal: Deal | None = None
     self_employed: SelfEmployed | None = None
     receipt_data: Receipt | None = None
-    personal_data: list[PersonalData]
+    personal_data: list[PersonalData] = Field(default_factory=list)
     metadata: dict | None = None
 
     @field_validator("metadata")

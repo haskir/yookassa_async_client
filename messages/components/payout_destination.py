@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from messages.components.bank_card import Card
+from .card import Card
 
 
 class PayoutDestination(BaseModel):

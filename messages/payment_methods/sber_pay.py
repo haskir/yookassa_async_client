@@ -1,5 +1,5 @@
 from .method import PaymentMethod
-from ..components.bank_card import Card
+from ..components.card import Card
 
 
 class SberPayPaymentMethod(PaymentMethod):

@@ -23,7 +23,7 @@ class Payout(_PayoutRequired):
     self_employed: SelfEmployed | None = None
     receipt: Receipt | None = None
     cancellation_details: CancellationDetails | None = None
-    metadata: dict | None = None
+    metadata: dict = Field(default_factory=dict)
 
     @classmethod
     def fabric(cls, data: dict) -> 'Payout':

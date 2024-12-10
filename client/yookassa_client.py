@@ -20,6 +20,7 @@ class YooKassaClient:
 
     async def post_request(self, path: str, idempotency_key: str, data: dict | BaseModel = None):
         data = self._deep_serialize(data)
+        pprint(data)
         async with AsyncClient() as client:
             return await client.post(
                 self.api + path,
@@ -32,13 +33,13 @@ class YooKassaClient:
     def _deep_serialize(cls, obj):
         if isinstance(obj, BaseModel):
             # Рекурсивно обрабатываем каждое поле BaseModel
-            return {key: cls._deep_serialize(value) for key, value in dict(obj).items()}
+            return {key: cls._deep_serialize(value) for key, value in dict(obj).items() if value}
         elif isinstance(obj, list):
             # Рекурсивно обрабатываем элементы списка
             return [cls._deep_serialize(item) for item in obj]
         elif isinstance(obj, dict):
             # Рекурсивно обрабатываем ключи и значения словаря
-            return {key: cls._deep_serialize(value) for key, value in obj.items()}
+            return {key: cls._deep_serialize(value) for key, value in obj.items() if value}
         elif isinstance(obj, (datetime, date)):
             # Преобразуем дату в строку
             return obj.isoformat()
@@ -46,5 +47,4 @@ class YooKassaClient:
             # Преобразуем enum в строку
             return obj.value
         else:
-            # Оставляем неизменными значения простых типов
             return obj
