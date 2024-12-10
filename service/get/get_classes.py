@@ -6,8 +6,14 @@ from messages import Transfer, PaymentStatus
 @dataclass(slots=True)
 class PaymentList:
     items: list[Transfer]
-    next_cursor: str
+    next_cursor: str = ""
     type: str = "list"
+
+    def __iter__(self):
+        return iter(self.items)
+
+    def __len__(self):
+        return len(self.items)
 
 
 @dataclass
@@ -45,9 +51,11 @@ class PaymentListRequest:
     def to_dict(self) -> dict:
         result = dict()
         if created_at := self.created_at:
-            result["created_at"] = created_at.to_dict()
+            arg, value = created_at.to_dict().popitem()
+            result[f"created_at.{arg}"] = value
         if captured_at := self.captured_at:
-            result["captured_at"] = captured_at.to_dict()
+            arg, value = captured_at.to_dict().popitem()
+            result[f"captured_at.{arg}"] = value
         if status := self.status:
             result["status"] = status.value
         if limit := self.limit:

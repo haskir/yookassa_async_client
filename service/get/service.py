@@ -13,8 +13,10 @@ class GetService:
             return Payment(**response.json())
         raise Exception(response.json())
 
-    async def get_payments(self, request: PaymentListRequest) -> PaymentList:
-        response = await self._client.get_request(path="payments", query=request.to_dict())
+    async def get_payments(self, r: PaymentListRequest | None = None) -> PaymentList:
+        q = r.to_dict() if r else None
+        print(f'{q = }')
+        response = await self._client.get_request(path="payments", query=q)
         if response.status_code == 200:
             return PaymentList(**response.json())
         raise Exception(response.json())
