@@ -1,6 +1,12 @@
 from enum import Enum
 
 
+class PayoutStatus(Enum):
+    PENDING = "pending"
+    SUCCEEDED = "succeeded"
+    CANCELED = "canceled"
+
+
 class PaymentStatus(Enum):
     PENDING = "pending"
     SUCCEEDED = "succeeded"
@@ -20,9 +26,9 @@ class ReceiptRegistration(Enum):
     succeeded = "succeeded"
     canceled = "canceled"
 
-
 __all__ = [
     'PaymentStatus',
     'CancellationStatus',
     'ReceiptRegistration',
+    'PayoutStatus'
 ]

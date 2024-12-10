@@ -1,5 +1,5 @@
 from client import YooKassaClient
-from messages.create import CreatePayment
+from messages.payment_create import CreatePayment
 
 
 class CreatePaymentService:

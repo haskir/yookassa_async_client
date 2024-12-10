@@ -1,7 +1,7 @@
 from datetime import datetime
 from pprint import pprint
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, Field
 
 from ..validators import check_metadata, check_transfers
 from ..components import *
@@ -19,7 +19,7 @@ class _PaymentRequired(BaseModel):
 
 class Payment(_PaymentRequired):
     income_amount: Amount | None = None
-    description: str | None = None
+    description: str = Field(default="", max_length=128)
     payment_method: PaymentMethod | None = None
     captured_at: datetime | None = None  # Время подтверждения платежа. Указывается по UTC и передается в формате ISO 8601.
     created_at: datetime  # Время создания способа оплаты. UTC ISO 8601 (2017-11-03T11:52:31.827Z).
@@ -34,30 +34,14 @@ class Payment(_PaymentRequired):
     cancellation_details: CancellationDetails | None = None
     authorization_details: AuthorizationDetails | None = None
     # Данные о распределении денег — сколько и в какой магазин нужно перевести. Присутствует, если вы используете cплитование платежей.
-    transfers: list[Transfer] | None = None
+    transfers: list[Transfer] = Field(default_factory=list, max_length=100)
     deal: Deal | None = None  # Данные о сделке, в составе которой проходит платеж. Присутствует, если вы проводите Безопасную сделку
-    merchant_customer_id: str | None = None  # Идентификатор покупателя в вашей системе, например электронная почта или номер телефона.
+    merchant_customer_id: str = Field(default="", max_length=200)  # Идентификатор покупателя в вашей системе, например электронная почта или номер телефона.
     invoice_details: InvoiceDetails | None = None
 
     @field_validator('metadata')
     def _check_metadata(cls, value: dict) -> dict:
         return check_metadata(value)
-
-    @field_validator('description')
-    def check_description(cls, value: str) -> str:
-        if len(value) > 128:
-            raise ValueError("Description must be less than 128 characters")
-        return value
-
-    @field_validator('merchant_customer_id')
-    def check_merchant_customer_id(cls, value: str) -> str:
-        if len(value) > 200:
-            raise ValueError("Merchant customer ID must be less than 200  characters")
-        return value
-
-    @field_validator('transfers')
-    def _check_transfers(cls, value: list[Transfer]) -> list[Transfer]:
-        return check_transfers(value)
 
     @classmethod
     def fabric(cls, data: dict) -> 'Payment':

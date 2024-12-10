@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from env import YOOKASSA_SHOP_ID, YOOKASSA_API_KEY
 from messages.components import Amount
 from messages.capture_payment import CapturePayment
-from messages.create import CreatePayment
+from messages.payment_create import CreatePayment
 from services import GetPaymentService, CreatePaymentService
 from client import YooKassaClient
 from services import CancelPaymentService, CapturePaymentService, PaymentListRequest, DatetimeCriteria
@@ -27,8 +27,8 @@ async def test_get_payments():
     )
 
 
-async def test_create():
-    from messages.create import Redirect
+async def test_create_payment():
+    from messages.payment_create import Redirect
     client = YooKassaClient(shop_id=YOOKASSA_SHOP_ID, api_key=YOOKASSA_API_KEY)
     service = CreatePaymentService(client)
     p = CreatePayment(
@@ -39,14 +39,26 @@ async def test_create():
     return await service.create(p)
 
 
-async def test_capture(ID: str):
+async def test_capture_payment(ID: str):
     client = YooKassaClient(shop_id=YOOKASSA_SHOP_ID, api_key=YOOKASSA_API_KEY)
     service = CapturePaymentService(client)
     capture = CapturePayment(amount=Amount(value=80, currency='RUB'))
     return await service.capture(ID, capture)
 
 
-async def test_cancel(ID: str):
+async def test_cancel_payment(ID: str):
     client = YooKassaClient(shop_id=YOOKASSA_SHOP_ID, api_key=YOOKASSA_API_KEY)
     service = CancelPaymentService(client)
     return await service.cancel(ID)
+
+
+async def test_create_payout():
+    ...
+
+
+async def test_get_payout(ID: str):
+    ...
+
+
+async def test_get_payouts():
+    ...

@@ -6,7 +6,7 @@ class CancelPaymentService:
         self._client = client
 
     async def cancel(self, ID: str):
-        idem_key = "cancel_1"
+        idem_key = f"cancel_{ID}"
         response = await self._client.post_request(path=f'payments/{ID}/cancel', idempotency_key=idem_key)
         if response.status_code == 200:
             return response.json()

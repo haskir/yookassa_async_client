@@ -1,6 +1,6 @@
 from client import YooKassaClient
 from .get_classes import PaymentList, PaymentListRequest
-from messages.get import Payment
+from messages.payment_get import Payment
 
 
 class GetPaymentService:
