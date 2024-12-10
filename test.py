@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
 
 from env import YOOKASSA_SHOP_ID, YOOKASSA_API_KEY
-from messages import Amount, CreatePayment, RedirectConfirmation, CapturePayment
+from messages.components import Amount
+from messages.capture_payment import CapturePayment
+from messages.create import CreatePayment
 from services import GetPaymentService, CreatePaymentService
 from client import YooKassaClient
 from services import CancelPaymentService, CapturePaymentService, PaymentListRequest, DatetimeCriteria
@@ -26,12 +28,13 @@ async def test_get_payments():
 
 
 async def test_create():
+    from messages.create import Redirect
     client = YooKassaClient(shop_id=YOOKASSA_SHOP_ID, api_key=YOOKASSA_API_KEY)
     service = CreatePaymentService(client)
     p = CreatePayment(
         amount=Amount(value=100, currency='RUB'),
         description='Тестовая оплата на 100 зябликов',
-        confirmation=RedirectConfirmation(return_url="https://discord.ru/")
+        confirmation=Redirect(return_url="https://discord.ru/")
     )
     return await service.create(p)
 

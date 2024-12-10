@@ -1,9 +1,10 @@
 from pydantic import BaseModel, field_validator
 
-from messages.validators import check_transfers
-from .components import Confirmation, Amount, Transfer, Deal, RecipientOnCreate
-from .payment_methods import PaymentMethod
-from .receipt import Receipt
+from ..validators import check_transfers
+from ..components import Amount, Transfer, Deal, RecipientOnCreate
+from .confirmation import *
+from ..payment_methods import PaymentMethod
+from ..receipt import Receipt
 
 
 class Receiver(BaseModel):

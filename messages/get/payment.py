@@ -3,10 +3,11 @@ from pprint import pprint
 
 from pydantic import BaseModel, field_validator
 
-from messages.validators import check_metadata, check_transfers
-from .components import *
-from .components.bank_card import BankCardPaymentMethod
-from .payment_methods import *
+from ..validators import check_metadata, check_transfers
+from ..components import *
+from ..components.bank_card import BankCardPaymentMethod
+from ..payment_methods import *
+from .confirmation import *
 
 
 class _PaymentRequired(BaseModel):
@@ -63,10 +64,10 @@ class Payment(_PaymentRequired):
         pprint(data)
         conf_type = {
             "embedded": EmbeddedConfirmation,
-            "external": ExternalConfirmation,
-            "mobile_application": MobileApplicationConfirmation,
-            "qr": QRConfirmation,
-            "redirect": RedirectConfirmation,
+            "external": External,
+            "mobile_application": MobileApplication,
+            "qr": QR,
+            "redirect": Redirect,
         }
         payment_method = {
             "bank_card": BankCardPaymentMethod,
@@ -78,7 +79,8 @@ class Payment(_PaymentRequired):
             "yoo_money": YooMoneyPaymentMethod,
         }
         additional = {
-            "payment_method": payment_method.get(data.get('payment_method').get('type'))(**data.get('payment_method')),
+            "payment_method": payment_method.get(data.get('payment_method').get('type'))(
+                **data.get('payment_method')) if data.get('payment_method') else None,
             "confirmation": conf_type.get(data.get('confirmation', {}).get('type'))(
                 **data.get('confirmation')) if data.get('confirmation') else None,
         }

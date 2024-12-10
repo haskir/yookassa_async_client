@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from messages import Transfer, PaymentStatus
+from messages.components import Transfer, PaymentStatus
 
 
 @dataclass(slots=True)
