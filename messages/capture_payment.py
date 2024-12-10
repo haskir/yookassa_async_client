@@ -14,10 +14,10 @@ class CapturePayment(BaseModel):
     В ответ на запрос придет объект платежа в актуальном статусе.
     """
     amount: Amount
-    receipt: Receipt
-    airline: None
-    transfers: list[Transfer]
-    deal: Deal
+    receipt: Receipt | None = None
+    airline: None = None
+    transfers: list[Transfer] = None
+    deal: Deal = None
 
 
 __all__ = [

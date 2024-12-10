@@ -1,3 +1,5 @@
+from datetime import datetime, date
+from enum import Enum
 from pprint import pprint
 
 from httpx import AsyncClient, BasicAuth
@@ -16,9 +18,8 @@ class YooKassaClient:
         async with AsyncClient() as client:
             return await client.get(self.api + path, params=query, auth=self._auth)
 
-    async def post_request(self, path: str, idempotency_key: str, data: dict | BaseModel):
+    async def post_request(self, path: str, idempotency_key: str, data: dict | BaseModel = None):
         data = self._deep_serialize(data)
-        pprint(data)
         async with AsyncClient() as client:
             return await client.post(
                 self.api + path,
@@ -38,6 +39,12 @@ class YooKassaClient:
         elif isinstance(obj, dict):
             # Рекурсивно обрабатываем ключи и значения словаря
             return {key: cls._deep_serialize(value) for key, value in obj.items()}
+        elif isinstance(obj, (datetime, date)):
+            # Преобразуем дату в строку
+            return obj.isoformat()
+        elif isinstance(obj, Enum):
+            # Преобразуем enum в строку
+            return obj.value
         else:
             # Оставляем неизменными значения простых типов
             return obj
