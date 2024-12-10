@@ -14,5 +14,3 @@ class SBPPaymentMethod(PaymentMethod):
     type: str = "sbp"
     payer_bank_details: PayerBankDetails | None
     sbp_operation_id: str | None
-
-

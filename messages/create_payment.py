@@ -1,5 +1,7 @@
 from pydantic import BaseModel, field_validator
-from .components import Confirmation, Amount, Transfer, Deal
+
+from messages.validators import check_transfers
+from .components import Confirmation, Amount, Transfer, Deal, RecipientOnCreate
 from .payment_methods import PaymentMethod
 from .receipt import Receipt
 
@@ -22,28 +24,33 @@ class Receiver(BaseModel):
         return value
 
 
-class CreateYookassaPayment(BaseModel):
+
+
+class _CreatePaymentRequired(BaseModel):
+    amount: Amount
+    receipt: Receipt
+    confirmation: Confirmation
+
+
+class CreatePayment(_CreatePaymentRequired):
     # Данные для формирования чека (receipt) необходимо передавать в этих случаях:
     # - вы компания или ИП и для оплаты с соблюдением требований 54-ФЗ используете Чеки от ЮKassa;
     # - вы компания или ИП, для оплаты с соблюдением требований 54-ФЗ используете стороннюю онлайн-кассу и отправляете данные для чеков по одному из сценариев: Платеж и чек одновременно  или Сначала чек, потом платеж ;
     # - вы самозанятый и используете решение ЮKassa для автоотправки чеков.
-    amount: Amount
-    description: str | None
-    receipt: Receipt
-    recipient: NotImplemented
-    payment_token: str | None
-    payment_method_id: str | None
-    payment_method_data: PaymentMethod | None
-    confirmation: Confirmation
-    save_payment_method: bool | None
-    capture: bool | None
-    client_ip: str | None
-    metadata: dict | None
-    airline: None
-    transfers: list[Transfer] | None
-    deal: Deal | None
-    merchant_customer_id: str | None
-    receiver: Receiver | None
+    description: str | None = ""
+    recipient: RecipientOnCreate
+    payment_token: str | None = None
+    payment_method_id: str | None = None
+    payment_method_data: PaymentMethod | None = None
+    save_payment_method: bool | None = None
+    capture: bool | None = None
+    client_ip: str | None = None
+    metadata: dict | None = None
+    airline: None = None
+    transfers: list[Transfer] | None = None
+    deal: Deal | None = None
+    merchant_customer_id: str | None = None
+    receiver: Receiver | None = None
 
     @field_validator('description')
     def check_description(cls, value: str) -> str:
@@ -51,8 +58,12 @@ class CreateYookassaPayment(BaseModel):
             raise ValueError("Description must be less than 128 characters")
         return value
 
+    @field_validator('transfers')
+    def _check_transfers(cls, value: list[Transfer]) -> list[Transfer]:
+        return check_transfers(value)
+
 
 __all__ = [
     'Receiver',
-    'CreateYookassaPayment',
+    'CreatePayment',
 ]

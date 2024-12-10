@@ -11,3 +11,11 @@ def check_metadata(value: dict) -> dict:
         if len(str(value)) > 512:
             raise ValueError(f"Metadata value '{value}' must be less than 512 characters")
     return value
+
+
+def check_transfers(value: list) -> list:
+    if value is None:
+        return []
+    if len(value) > 100:
+        raise ValueError("Transfers must be less than 100 items")
+    return value

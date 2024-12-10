@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator
 
-from validators import check_metadata
+from ..validators import check_metadata
 from .status import PaymentStatus
 from .amount import Amount
 
