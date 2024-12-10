@@ -1,9 +1,12 @@
 from datetime import datetime
+from pprint import pprint
+
 from pydantic import BaseModel, field_validator
 
 from messages.validators import check_metadata, check_transfers
 from .components import *
-from .payment_methods import PaymentMethod
+from .components.bank_card import BankCardPaymentMethod
+from .payment_methods import *
 
 
 class _PaymentRequired(BaseModel):
@@ -56,17 +59,30 @@ class Payment(_PaymentRequired):
         return check_transfers(value)
 
     @classmethod
-    def fabric(cls, **kwargs) -> 'Payment':
+    def fabric(cls, data: dict) -> 'Payment':
+        pprint(data)
         conf_type = {
             "embedded": EmbeddedConfirmation,
             "external": ExternalConfirmation,
             "mobile_application": MobileApplicationConfirmation,
             "qr": QRConfirmation,
             "redirect": RedirectConfirmation,
-        }.get(kwargs.get('confirmation', {}).get('type'))
-        if conf_type is None:
-            return cls(**kwargs)
-        return cls(**kwargs, confirmation=conf_type(**kwargs['confirmation']))
+        }
+        payment_method = {
+            "bank_card": BankCardPaymentMethod,
+            "qiwi": QiwiPaymentMethod,
+            "sber_pay": SberPayPaymentMethod,
+            "sbp": SBPPaymentMethod,
+            "installments": SplitPaymentMethod,
+            "t_pay": TPaymentMethod,
+            "yoo_money": YooMoneyPaymentMethod,
+        }
+        additional = {
+            "payment_method": payment_method.get(data.get('payment_method').get('type'))(**data.get('payment_method')),
+            "confirmation": conf_type.get(data.get('confirmation', {}).get('type'))(
+                **data.get('confirmation')) if data.get('confirmation') else None,
+        }
+        return cls(**(data | additional))
 
 
 __all__ = [

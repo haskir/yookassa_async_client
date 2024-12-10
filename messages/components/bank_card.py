@@ -2,7 +2,7 @@ from enum import Enum
 
 from pydantic import BaseModel, field_validator
 
-from .method import PaymentMethod
+from messages.payment_methods.method import PaymentMethod
 
 
 class CardProduct(BaseModel):
@@ -56,3 +56,11 @@ class Card(BaseModel):
 class BankCardPaymentMethod(PaymentMethod):
     type: str = "bank_card"
     card: Card  # Данные банковской карты.
+
+
+__all__ = [
+    "Card",
+    "CardProduct",
+    "CardType",
+    "BankCardPaymentMethod",
+]

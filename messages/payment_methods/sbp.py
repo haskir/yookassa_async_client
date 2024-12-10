@@ -1,8 +1,6 @@
-from datetime import datetime
-
 from pydantic import BaseModel
 
-from ..payment_methods import PaymentMethod
+from .method import PaymentMethod
 
 
 class PayerBankDetails(BaseModel):
@@ -14,3 +12,9 @@ class SBPPaymentMethod(PaymentMethod):
     type: str = "sbp"
     payer_bank_details: PayerBankDetails | None
     sbp_operation_id: str | None
+
+
+__all__ = [
+    "PayerBankDetails",
+    "SBPPaymentMethod",
+]

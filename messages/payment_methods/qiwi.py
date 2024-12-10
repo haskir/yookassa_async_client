@@ -1,5 +1,10 @@
-from messages.payment_methods import PaymentMethod
+from .method import PaymentMethod
 
 
 class QiwiPaymentMethod(PaymentMethod):
     type: str = "qiwi"
+
+
+__all__ = [
+    "QiwiPaymentMethod",
+]
