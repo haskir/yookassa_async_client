@@ -3,7 +3,7 @@ from .get_classes import PaymentList, PaymentListRequest
 from messages import Payment
 
 
-class GetService:
+class GetPaymentService:
     def __init__(self, client: YooKassaClient) -> None:
         self._client = client
 

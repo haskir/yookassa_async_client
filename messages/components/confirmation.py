@@ -7,30 +7,38 @@ class Confirmation(BaseModel):
     type: str  # Значение — confirmation. Код способа оплаты.
 
 
-class Embedded(Confirmation):
+class EmbeddedConfirmation(Confirmation):
     type: str = "embedded"
     confirmation_token: str  # Токен для инициализации платежного виджета ЮKassa.
 
 
-class External(Confirmation):
+class ExternalConfirmation(Confirmation):
     type: str = "external"
 
 
-class MobileApplication(Confirmation):
+class MobileApplicationConfirmation(Confirmation):
     type: str = "mobile_application"
     confirmation_url: str  # Диплинк на мобильное приложение, в котором пользователь подтверждает платеж.
 
 
-class QR(Confirmation):
+class QRConfirmation(Confirmation):
     type: str = "qr"
     confirmation_data: str  # Данные для генерации QR-кода.
 
 
-class Redirect(Confirmation):
+class RedirectConfirmation(Confirmation):
+    """
+        URL, на который необходимо перенаправить пользователя после проведения платежа.
+    """
     type: str = "redirect"
-    confirmation_url: str  # URL, на который необходимо перенаправить пользователя для подтверждения оплаты.
-    enforce: bool | None  # Запрос на проведение платежа с аутентификацией по 3-D Secure. Будет работать, если оплату банковской картой вы по умолчанию принимаете без подтверждения платежа пользователем. В остальных случаях аутентификацией по 3-D Secure будет управлять ЮKassa. Если хотите принимать платежи без дополнительного подтверждения пользователем, напишите вашему менеджеру ЮKassa.
-    return_url: str | None  # URL, на который необходимо перенаправить пользователя после проведения платежа.
+    # URL, на который необходимо перенаправить пользователя для подтверждения оплаты.
+    # confirmation_url: str
+    # Запрос на проведение платежа с аутентификацией по 3-D Secure.
+    # Будет работать, если оплату банковской картой вы по умолчанию принимаете без подтверждения платежа пользователем.
+    # В остальных случаях аутентификацией по 3-D Secure будет управлять ЮKassa.
+    enforce: bool | None = None
+
+    return_url: str
 
     @field_validator('return_url')
     def check_return_url(cls, value: str) -> str:
@@ -46,10 +54,10 @@ class CancellationDetails(BaseModel):
 
 __all__ = [
     'Confirmation',
-    'Embedded',
-    'External',
-    'MobileApplication',
-    'QR',
-    'Redirect',
+    'EmbeddedConfirmation',
+    'ExternalConfirmation',
+    'MobileApplicationConfirmation',
+    'QRConfirmation',
+    'RedirectConfirmation',
     'CancellationDetails',
 ]
