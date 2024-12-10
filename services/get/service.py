@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from client import YooKassaClient
 from .get_classes import PaymentList, PaymentListRequest
 from messages import Payment
@@ -9,8 +11,9 @@ class GetPaymentService:
 
     async def get(self, ID: str) -> Payment:
         response = await self._client.get_request(path=f'payments/{ID}')
+        pprint(response.json())
         if response.status_code == 200:
-            return Payment(**response.json())
+            return Payment.fabric(**response.json())
         raise Exception(response.json())
 
     async def get_payments(self, r: PaymentListRequest | None = None) -> PaymentList:

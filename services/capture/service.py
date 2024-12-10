@@ -7,7 +7,7 @@ class CapturePaymentService:
         self._client = client
 
     async def capture(self, ID: str, capture: CapturePayment) -> Payment:
-        idem_key = "1234567"
+        idem_key = f"capture_{ID}"
         response = await self._client.post_request(path=f'payments/{ID}/capture', idempotency_key=idem_key)
         if response.status_code == 200:
             return Payment(**response.json())

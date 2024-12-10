@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from pprint import pprint
 
 from env import YOOKASSA_SHOP_ID, YOOKASSA_API_KEY
 from messages import Amount, CreatePayment, RedirectConfirmation, CapturePayment

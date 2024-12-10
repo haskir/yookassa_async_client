@@ -7,7 +7,7 @@ class CreatePaymentService:
         self._client = client
 
     async def create(self, payment: CreatePayment) -> dict:
-        idempotency_key = "123456"
+        idempotency_key = "create_123456"
         response = await self._client.post_request("payments", idempotency_key, payment)
         if response.status_code == 200:
             return response.json()

@@ -55,6 +55,19 @@ class Payment(_PaymentRequired):
     def _check_transfers(cls, value: list[Transfer]) -> list[Transfer]:
         return check_transfers(value)
 
+    @classmethod
+    def fabric(cls, **kwargs) -> 'Payment':
+        conf_type = {
+            "embedded": EmbeddedConfirmation,
+            "external": ExternalConfirmation,
+            "mobile_application": MobileApplicationConfirmation,
+            "qr": QRConfirmation,
+            "redirect": RedirectConfirmation,
+        }.get(kwargs.get('confirmation', {}).get('type'))
+        if conf_type is None:
+            return cls(**kwargs)
+        return cls(**kwargs, confirmation=conf_type(**kwargs['confirmation']))
+
 
 __all__ = [
     'Payment',
