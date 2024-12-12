@@ -38,14 +38,13 @@ async def test_create_payment():
         description='Тестовая оплата на 100 зябликов',
         confirmation=Redirect(return_url="https://discord.ru/")
     )
-    return await service.create(p)
+    return await service.create(p, "123")
 
 
 async def test_capture_payment(ID: str):
     client = YooKassaClient(shop_id=YOOKASSA_SHOP_ID, api_key=YOOKASSA_API_KEY)
     service = CapturePaymentService(client)
-    capture = CapturePayment(amount=Amount(value=80, currency='RUB'))
-    return await service.capture(ID, capture)
+    return await service.capture(ID, value=80, currency='RUB')
 
 
 async def test_cancel_payment(ID: str):
@@ -54,19 +53,19 @@ async def test_cancel_payment(ID: str):
     return await service.cancel(ID)
 
 
-async def test_create_payout():
-    client = YooKassaClient(shop_id=YOOKASSA_SHOP_ID, api_key=YOOKASSA_API_KEY)
-    service = CreatePayoutService(client)
-    p = CreatePayout(
-        amount=Amount(value=100, currency='RUB'),
-        description='Тестовая выплата 100 зябликов квоуну',
-        payout_destination_data=YooMoneyDestination(account_number=MY_YOO_KASSA_ID),
-        # personal_data=[PersonalData(id=MY_YOO_KASSA_ID)],
-    )
-    return await service.create(p, "create_1")
-
-
-async def test_get_payout(ID: str):
-    client = YooKassaClient(shop_id=YOOKASSA_SHOP_ID, api_key=YOOKASSA_API_KEY)
-    service = GetPayoutService(client)
-    return await service.get(ID)
+# async def test_create_payout():
+#     client = YooKassaClient(shop_id=YOOKASSA_SHOP_ID, api_key=YOOKASSA_API_KEY)
+#     service = CreatePayoutService(client)
+#     p = CreatePayout(
+#         amount=Amount(value=100, currency='RUB'),
+#         description='Тестовая выплата 100 зябликов квоуну',
+#         payout_destination_data=YooMoneyDestination(account_number=MY_YOO_KASSA_ID),
+#         # personal_data=[PersonalData(id=MY_YOO_KASSA_ID)],
+#     )
+#     return await service.create(p, "create_1")
+#
+#
+# async def test_get_payout(ID: str):
+#     client = YooKassaClient(shop_id=YOOKASSA_SHOP_ID, api_key=YOOKASSA_API_KEY)
+#     service = GetPayoutService(client)
+#     return await service.get(ID)

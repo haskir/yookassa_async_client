@@ -13,7 +13,7 @@ class GetPaymentService:
             return Payment.fabric(response.json())
         raise Exception(response.json())
 
-    async def get_payments(self, r: PaymentListRequest | None = None) -> PaymentList:
+    async def get_payments(self, r: PaymentListRequest = None) -> PaymentList:
         q = r.to_dict() if r else None
         response = await self._client.get_request(path="payments", query=q)
         if response.status_code == 200:
