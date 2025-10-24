@@ -1,6 +1,5 @@
 from client import YooKassaClient
-from messages.payout_create import CreatePayout
-from messages.payout_get import Payout
+from messages.yookassa import CreatePayout, Payout
 
 
 class CreatePayoutService:
@@ -14,5 +13,5 @@ class CreatePayoutService:
             data=payout
         )
         if response.status_code == 200:
-            return Payout.fabric(response)
+            return Payout.model_validate(response)
         raise Exception(response.json())

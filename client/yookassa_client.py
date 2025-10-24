@@ -1,5 +1,3 @@
-from datetime import datetime, date
-from enum import Enum
 from pprint import pprint
 
 from httpx import AsyncClient, BasicAuth
@@ -15,36 +13,14 @@ class YooKassaClient:
         self._auth = BasicAuth(self._id, self._api_key)
 
     async def get_request(self, path: str, query: dict = None):
-        async with AsyncClient() as client:
-            return await client.get(self.api + path, params=query, auth=self._auth)
+        async with AsyncClient(auth=self._auth) as client:
+            return await client.get(self.api + path, params=query)
 
-    async def post_request(self, path: str, idempotency_key: str, data: dict | BaseModel = None):
-        data = self._deep_serialize(data)
+    async def post_request(self, path: str, idempotency_key: str, data: BaseModel = None):
         pprint(data)
-        async with AsyncClient() as client:
+        async with AsyncClient(auth=self._auth) as client:
             return await client.post(
                 self.api + path,
-                json=data,
+                json=data.model_dump(),
                 headers={"Idempotence-Key": idempotency_key},
-                auth=self._auth
             )
-
-    @classmethod
-    def _deep_serialize(cls, obj):
-        if isinstance(obj, BaseModel):
-            # Рекурсивно обрабатываем каждое поле BaseModel
-            return {key: cls._deep_serialize(value) for key, value in dict(obj).items() if value}
-        elif isinstance(obj, list):
-            # Рекурсивно обрабатываем элементы списка
-            return [cls._deep_serialize(item) for item in obj]
-        elif isinstance(obj, dict):
-            # Рекурсивно обрабатываем ключи и значения словаря
-            return {key: cls._deep_serialize(value) for key, value in obj.items() if value}
-        elif isinstance(obj, (datetime, date)):
-            # Преобразуем дату в строку
-            return obj.isoformat()
-        elif isinstance(obj, Enum):
-            # Преобразуем enum в строку
-            return obj.value
-        else:
-            return obj

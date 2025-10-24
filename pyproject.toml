@@ -1,0 +1,11 @@
+[project]
+name = "yookassa-async-client"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "dotenv>=0.9.9",
+    "httpx>=0.28.1",
+    "pydantic>=2.12.3",
+    "ruff>=0.14.2",
+]
