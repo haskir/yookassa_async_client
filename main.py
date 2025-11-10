@@ -7,12 +7,13 @@ from src.settings import Settings
 
 
 async def main_payment(settings: Settings) -> None:
+    from src.test_models import test_payment
     from src.test_payment import TestPayment
 
     exist_id: str = ""  # noqa: F841
 
     async def create() -> str:
-        created: Payment = await test.create_payment()
+        created: Payment = await test.create_payment(test_payment)
         return created.id
 
     async def get(_id: str) -> str:  # noqa: F841
@@ -33,12 +34,13 @@ async def main_payment(settings: Settings) -> None:
 
 
 async def main_payout(settings: Settings) -> None:
+    from src.test_models import get_test_payout
     from src.test_payout import TestPayout
 
     exist_id: str = ""  # noqa: F841
 
     async def create() -> str:
-        created: Payout = await test.create_payout()
+        created: Payout = await test.create_payout(get_test_payout(settings))
         return created.id
 
     async def get(_id: str) -> Payout:
@@ -50,9 +52,9 @@ async def main_payout(settings: Settings) -> None:
 
 
 def test_models():
-    from src.test_models import payment
+    from src.test_models import test_payment
 
-    print(payment.model_dump_json(indent=4))
+    print(test_payment.model_dump_json(indent=4))
 
 
 if __name__ == "__main__":

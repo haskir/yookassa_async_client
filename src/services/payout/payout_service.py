@@ -17,6 +17,7 @@ class PayoutService:
     async def get(self, ID: str) -> Payout:
         response: Response = await self._client.get_request(path=f"payouts/{ID}")
         if response.status_code == 200:
+            self._repr_response(response)
             return Payout.model_validate(response)
         raise self._exception(response.json())
 
@@ -27,6 +28,7 @@ class PayoutService:
             data=payout,
         )
         if response.status_code == 200:
+            self._repr_response(response)
             return Payout.model_validate(response)
         raise self._exception(response.json())
 

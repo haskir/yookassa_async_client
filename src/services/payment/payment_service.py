@@ -16,23 +16,23 @@ class PaymentService:
 
     async def get(self, ID: str) -> Payment:
         response: Response = await self._client.get_request(path=f"payments/{ID}")
-        self._repr_response(response)
         if response.status_code == 200:
+            self._repr_response(response)
             return Payment.model_validate(response.json())
         raise self._exception(response.json())
 
     async def get_payments(self, params: PaymentListRequest = None) -> PaymentList:
         query = params.to_dict() if params else None
         response: Response = await self._client.get_request(path="payments", query=query)
-        self._repr_response(response)
         if response.status_code == 200:
+            self._repr_response(response)
             return PaymentList(**response.json())
         raise self._exception(response.json())
 
     async def create(self, payment: CreatePayment, idempotency_key: str) -> Payment:
         response: Response = await self._client.post_request("payments", idempotency_key, payment)
-        self._repr_response(response)
         if response.status_code == 200:
+            self._repr_response(response)
             return Payment.model_validate(response.json())
         raise self._exception(response.json())
 
@@ -42,8 +42,8 @@ class PaymentService:
             idempotency_key=idempotency_key,
             data={"amount": amount.model_dump()},
         )
-        self._repr_response(response)
         if response.status_code == 200:
+            self._repr_response(response)
             return Payment.model_validate(response.json())
         raise self._exception(response.json())
 
@@ -52,8 +52,8 @@ class PaymentService:
             path=f"payments/{ID}/cancel",
             idempotency_key=idempotency_key,
         )
-        self._repr_response(response)
         if response.status_code == 200:
+            self._repr_response(response)
             return Payment.model_validate(response.json())
         raise self._exception(response.json())
 

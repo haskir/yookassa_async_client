@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
-from src.messages import Amount, CreatePayment, Redirect
-from src.messages.yookassa import Currency
+from src.messages import Amount, CreatePayment
 from src.services import DatetimeCriteria, PaymentListRequest, PaymentService
 from src.settings import Settings
 
@@ -16,20 +15,14 @@ class TestPayment:
     async def get_payment(self, ID: str):
         return await self._service.get(ID)
 
-    async def test_get_payments(self):
-        return await self._service.get_payments(
-            params=PaymentListRequest(
-                created_at=DatetimeCriteria(gte=datetime.now() - timedelta(days=1)),
-            )
+    async def get_payments(self, params: PaymentListRequest = None):
+        query: PaymentListRequest = params or PaymentListRequest(
+            created_at=DatetimeCriteria(gte=datetime.now(UTC) - timedelta(days=1)),
         )
+        return await self._service.get_payments(query)
 
-    async def create_payment(self, key: str = None):
-        payment: CreatePayment = CreatePayment(
-            amount=Amount(value=100, currency=Currency.RUB),
-            description="Тестовая оплата на 100 зябликов",
-            confirmation=Redirect(return_url="https://discord.ru/"),
-        )
-        idempotency_key: str = key or datetime.now().isoformat()
+    async def create_payment(self, payment: CreatePayment, key: str = None):
+        idempotency_key: str = key or datetime.now(UTC).isoformat()
         return await self._service.create(payment, idempotency_key)
 
     async def capture_payment(self, ID: str, amount: Amount, key: str = None):
