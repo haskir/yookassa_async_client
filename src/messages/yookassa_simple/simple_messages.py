@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from messages.yookassa import Currency
+from src.messages.yookassa import Currency
 
 __all__ = "CreatePaymentDTO", "CapturePaymentDTO"
 
