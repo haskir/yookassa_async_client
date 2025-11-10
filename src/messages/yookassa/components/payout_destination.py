@@ -1,8 +1,11 @@
+from enum import StrEnum
+
 from pydantic import BaseModel
 
 from .card import Card
 
 __all__ = [
+    "Destination",
     "PayoutDestination",
     "CardDestination",
     "SBPDestination",
@@ -11,32 +14,31 @@ __all__ = [
 ]
 
 
-class PayoutDestination(BaseModel):
-    type: str
-
-    @classmethod
-    def factory(cls, data: dict) -> "PayoutDestination":
-        return {"bank_card": CardDestination, "sbp": SBPDestination, "yoo_money": YooMoneyDestination}.get(
-            data.get("type")
-        )(**data)
+class Destination(StrEnum):
+    BANK_CARD = "bank_card"
+    SBP = "sbp"
+    YOO_MONEY = "yoo_money"
 
 
-class CardDestination(PayoutDestination):
-    type: str = "bank_card"
+class CardDestination(BaseModel):
+    type: Destination = Destination.BANK_CARD
     card: Card
 
 
-class SBPDestination(PayoutDestination):
-    type: str = "sbp"
+class SBPDestination(BaseModel):
+    type: Destination = Destination.SBP
     bank_id: str
     phone: str
     recipient_checked: bool
 
 
-class YooMoneyDestination(PayoutDestination):
-    type: str = "yoo_money"
-    account_number: str
+class YooMoneyDestination(BaseModel):
+    type: Destination = Destination.YOO_MONEY
+    account_number: int
 
 
 class PersonalData(BaseModel):
     id: str
+
+
+PayoutDestination = CardDestination | SBPDestination | YooMoneyDestination

@@ -6,12 +6,9 @@ from ..validators import check_metadata
 __all__ = ["CreatePayout"]
 
 
-class _CreatePayoutRequired(BaseModel):
+class CreatePayout(BaseModel):
     amount: Amount
-
-
-class CreatePayout(_CreatePayoutRequired):
-    payout_destination_data: PayoutDestination | None = None
+    payout_destination_data: PayoutDestination
     payout_token: str = Field(default="")
     payment_method_id: str = Field(default="")
     description: str = Field(default="", max_length=128)

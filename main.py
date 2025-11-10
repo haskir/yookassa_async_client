@@ -2,14 +2,14 @@ import asyncio
 
 from loguru import logger
 
+from src.messages import Amount, Currency, Payment, Payout
 from src.settings import Settings
 
 
 async def main_payment(settings: Settings) -> None:
-    from src.messages import Amount, Currency, Payment
     from src.test_payment import TestPayment
 
-    exist_id: str = "30a4403b-000f-5000-b000-1769ab6e373f"  # noqa: F841
+    exist_id: str = ""  # noqa: F841
 
     async def create() -> str:
         created: Payment = await test.create_payment()
@@ -35,7 +35,18 @@ async def main_payment(settings: Settings) -> None:
 async def main_payout(settings: Settings) -> None:
     from src.test_payout import TestPayout
 
+    exist_id: str = ""  # noqa: F841
+
+    async def create() -> str:
+        created: Payout = await test.create_payout()
+        return created.id
+
+    async def get(_id: str) -> Payout:
+        return await test.get_payout(_id)
+
     test: TestPayout = TestPayout(settings)  # noqa
+    exist_id = await create()
+    await get(exist_id)
 
 
 def test_models():
@@ -46,4 +57,5 @@ def test_models():
 
 if __name__ == "__main__":
     _settings: Settings = Settings.load(".env", "logs", logger)
-    asyncio.run(main_payment(_settings))
+    # asyncio.run(main_payment(_settings))
+    asyncio.run(main_payout(_settings))
