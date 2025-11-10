@@ -17,7 +17,7 @@ class PaymentList:
         return len(self.items)
 
 
-@dataclass
+@dataclass(slots=True)
 class DatetimeCriteria:
     gte: datetime | None = None
     gt: datetime | None = None

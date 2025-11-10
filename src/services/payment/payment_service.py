@@ -1,49 +1,63 @@
+from httpx import Response
+
 from src.client import YooKassaClient
-from src.messages import Amount, CreatePayment, Currency, Payment, PaymentList, PaymentListRequest
+from src.messages import Amount, CreatePayment, Payment, PaymentList, PaymentListRequest
 
 __all__ = ["PaymentService"]
 
+from src.settings import Settings
+
 
 class PaymentService:
-    def __init__(self, client: YooKassaClient) -> None:
-        self._client = client
+    def __init__(self, settings: Settings, exception_type: type[Exception] = Exception) -> None:
+        self._client: YooKassaClient = YooKassaClient(settings)
+        self._settings: Settings = settings
+        self._exception: type[Exception] = exception_type
 
     async def get(self, ID: str) -> Payment:
-        response = await self._client.get_request(path=f"payments/{ID}")
+        response: Response = await self._client.get_request(path=f"payments/{ID}")
+        self._repr_response(response)
         if response.status_code == 200:
             return Payment.model_validate(response.json())
-        raise Exception(response.json())
+        raise self._exception(response.json())
 
-    async def get_payments(self, r: PaymentListRequest = None) -> PaymentList:
-        q = r.to_dict() if r else None
-        response = await self._client.get_request(path="payments", query=q)
+    async def get_payments(self, params: PaymentListRequest = None) -> PaymentList:
+        query = params.to_dict() if params else None
+        response: Response = await self._client.get_request(path="payments", query=query)
+        self._repr_response(response)
         if response.status_code == 200:
             return PaymentList(**response.json())
-        raise Exception(response.json())
+        raise self._exception(response.json())
 
     async def create(self, payment: CreatePayment, idempotency_key: str) -> Payment:
-        response = await self._client.post_request("payments", idempotency_key, payment)
+        response: Response = await self._client.post_request("payments", idempotency_key, payment)
+        self._repr_response(response)
         if response.status_code == 200:
             return Payment.model_validate(response.json())
-        raise Exception(response.json())
+        raise self._exception(response.json())
 
-    async def capture(self, ID: str, value: float, currency: Currency) -> Payment:
-        idem_key = f"capture_{ID}"
-        response = await self._client.post_request(
+    async def capture(self, ID: str, amount: Amount, idempotency_key: str) -> Payment:
+        response: Response = await self._client.post_request(
             path=f"payments/{ID}/capture",
-            idempotency_key=idem_key,
-            data=Amount(value=value, currency=currency),
+            idempotency_key=idempotency_key,
+            data={"amount": amount.model_dump()},
         )
+        self._repr_response(response)
         if response.status_code == 200:
             return Payment.model_validate(response.json())
-        raise Exception(response.json())
+        raise self._exception(response.json())
 
-    async def cancel(self, ID: str) -> Payment:
-        idem_key = f"cancel_{ID}"
-        response = await self._client.post_request(
+    async def cancel(self, ID: str, idempotency_key: str) -> Payment:
+        response: Response = await self._client.post_request(
             path=f"payments/{ID}/cancel",
-            idempotency_key=idem_key,
+            idempotency_key=idempotency_key,
         )
+        self._repr_response(response)
         if response.status_code == 200:
             return Payment.model_validate(response.json())
-        raise Exception(response.json())
+        raise self._exception(response.json())
+
+    def _repr_response(self, response: Response) -> None:
+        if not self._settings.DEBUG:
+            return
+        print(f"{response.status_code}: {response.json()}")

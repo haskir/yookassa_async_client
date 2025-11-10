@@ -27,18 +27,17 @@ class PaymentType(StrEnum):
     BANK_CARD = "bank_card"
 
 
-class PaymentMethod(BaseModel):
+class BasePaymentMethod(BaseModel):
     id: str
     saved: bool  # С помощью сохраненного способа оплаты можно проводить безакцептные списания.
     title: str = Field(default="")  # Название способа оплаты.
-    type: str
 
 
-class QiwiPaymentMethod(PaymentMethod):
+class QiwiPaymentMethod(BasePaymentMethod):
     type: PaymentType = PaymentType.QIWI
 
 
-class SberPayPaymentMethod(PaymentMethod):
+class SberPayPaymentMethod(BasePaymentMethod):  # noqa
     type: PaymentType = PaymentType.SBERBANK
     card: Card
     phone: str | None
@@ -49,25 +48,38 @@ class PayerBankDetails(BaseModel):
     bic: str
 
 
-class SBPPaymentMethod(PaymentMethod):
+class SBPPaymentMethod(BasePaymentMethod):
     type: PaymentType = PaymentType.SBP
     payer_bank_details: PayerBankDetails | None
     sbp_operation_id: str | None
 
 
-class SplitPaymentMethod(PaymentMethod):
+class SplitPaymentMethod(BasePaymentMethod):
     type: PaymentType = PaymentType.SPLIT
 
 
-class TPaymentMethod(PaymentMethod):
+class TPaymentMethod(BasePaymentMethod):
     type: PaymentType = PaymentType.TINKOFF_BANK
     card: Card
 
 
-class YooMoneyPaymentMethod(PaymentMethod):
+class YooMoneyPaymentMethod(BasePaymentMethod):
     type: PaymentType = PaymentType.YOO_MONEY
 
 
-class BankCardPaymentMethod(PaymentMethod):
+class BankCardPaymentMethod(BasePaymentMethod):
     type: PaymentType = PaymentType.BANK_CARD
     card: Card | None = None
+
+
+PaymentMethod = (
+    QiwiPaymentMethod
+    | SberPayPaymentMethod
+    | PayerBankDetails
+    | SBPPaymentMethod
+    | SplitPaymentMethod
+    | TPaymentMethod
+    | YooMoneyPaymentMethod
+    | BankCardPaymentMethod
+    | None
+)

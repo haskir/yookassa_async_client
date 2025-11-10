@@ -39,4 +39,4 @@ class AppSettingsWithFactory(BaseSettings):
 class Settings(AppSettingsWithFactory):
     shop_id: int = Field(validation_alias="YOOKASSA_SHOP_ID")
     api_key: str = Field(validation_alias="YOOKASSA_API_KEY")
-    my_kassa_id: int = Field(validation_alias="MY_YOO_KASSA_ID")
+    my_kassa_id: int = Field(validation_alias="MY_YOOKASSA_ID")

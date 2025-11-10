@@ -1,1 +1,1 @@
-from .yookassa_client import YooKassaClient
+from .yookassa_client import *

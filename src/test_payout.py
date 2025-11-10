@@ -19,7 +19,7 @@ def _test_payout(settings: Settings) -> CreatePayout:
 class TestPayout:
     def __init__(self, settings: Settings):
         self.settings: Settings = settings
-        self._client: YooKassaClient = YooKassaClient(shop_id=self.settings.shop_id, api_key=self.settings.api_key)
+        self._client: YooKassaClient = YooKassaClient(settings)
         self._service: PayoutService = PayoutService(self._client)
 
     async def test_create_payout(self, payout: CreatePayout = None, idempotency_key: str = "create_1"):

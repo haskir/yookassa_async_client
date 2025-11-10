@@ -23,9 +23,3 @@ class Amount(BaseModel):
     @field_validator("value")
     def check_value(cls, value: float) -> float:
         return float(f"{value:.2f}")
-
-    @field_validator("currency")
-    def check_currency(cls, value: str) -> str:
-        if len(value) != 3:
-            raise ValueError("Currency must be 3 characters long")
-        return value.upper()

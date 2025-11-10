@@ -24,11 +24,7 @@ class Receiver(BaseModel):
         return value
 
 
-class _CreatePaymentRequired(BaseModel):
-    amount: Amount
-
-
-class CreatePayment(_CreatePaymentRequired):
+class CreatePayment(BaseModel):
     """
     Данные для формирования чека (receipt) необходимо передавать в этих случаях:
     - вы компания или ИП и для оплаты с соблюдением требований 54-ФЗ используете Чеки от ЮKassa;
@@ -37,13 +33,14 @@ class CreatePayment(_CreatePaymentRequired):
     - вы самозанятый и используете решение ЮKassa для авто отправки чеков.
     """
 
+    amount: Amount
     description: str | None = ""
     receipt: Receipt | None = None
     confirmation: Confirmation | None = None
     recipient: RecipientOnCreate | None = None
     payment_token: str | None = None
     payment_method_id: str | None = None
-    payment_method_data: PaymentMethod | None = None
+    payment_method_data: PaymentMethod = None
     save_payment_method: bool | None = None
     capture: bool | None = None
     client_ip: str | None = None
