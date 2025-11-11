@@ -34,7 +34,7 @@ class SBPDestination(BaseModel):
 
 class YooMoneyDestination(BaseModel):
     type: Destination = Destination.YOO_MONEY
-    account_number: int
+    account_number: str
 
 
 class PersonalData(BaseModel):

@@ -8,7 +8,8 @@ __all__ = ["CreatePayout"]
 
 class CreatePayout(BaseModel):
     amount: Amount
-    payout_destination_data: PayoutDestination
+    # Обязательный параметр, если не передан payout_token или payment_method_id.
+    payout_destination_data: PayoutDestination | None = None
     payout_token: str = Field(default="")
     payment_method_id: str = Field(default="")
     description: str = Field(default="", max_length=128)

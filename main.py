@@ -10,7 +10,7 @@ async def main_payment(settings: Settings) -> None:
     from src.test_models import test_payment
     from src.test_payment import TestPayment
 
-    exist_id: str = ""  # noqa: F841
+    exist_id: str = "30a44d70-000f-5000-b000-1b3c84bbe022"  # noqa: F841
 
     async def create() -> str:
         created: Payment = await test.create_payment(test_payment)
@@ -26,11 +26,11 @@ async def main_payment(settings: Settings) -> None:
         return await test.capture_payment(_id, amount=Amount(value=80, currency=Currency.RUB))
 
     test: TestPayment = TestPayment(settings)
-    exist_id = await create()
-    await get(exist_id)
-    # await cancel(exist_id)
-    input("Жду оплаты")
-    await capture(exist_id)
+    # exist_id = await create()
+    # await get(exist_id)
+    await cancel(exist_id)
+    # input("Жду оплаты")
+    # await capture(exist_id)
 
 
 async def main_payout(settings: Settings) -> None:
